@@ -66,12 +66,14 @@ data:
        host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
        port #ELASTICSEARCH_PORT#
        logstash_format true
+       user fluent
+       password # Enter the password for the user to connect to ES
        buffer_chunk_limit 2M
        buffer_queue_limit 32
-       flush_interval 60s  # flushes events ever minute. Can be configured as needed.
+       flush_interval 10s  # flushes events ever minute. Can be configured as needed.
        max_retry_wait 30
        disable_retry_limit
-       num_threads 2
+       num_threads 8
     </match>
 
     <match journal.kubelet.**>
@@ -82,12 +84,14 @@ data:
        host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
        port #ELASTICSEARCH_PORT#
        logstash_format true
+       user fluent
+       password # Enter the password for the user to connect to ES
        buffer_chunk_limit 2M
        buffer_queue_limit 32
-       flush_interval 60s  # flushes events ever minute. Can be configured as needed.
+       flush_interval 10s  # flushes events ever minute. Can be configured as needed.
        max_retry_wait 30
        disable_retry_limit
-       num_threads 2
+       num_threads 8
     </match>
 
     <match portworx.**>
@@ -102,9 +106,9 @@ data:
        logstash_format true
        buffer_chunk_limit 2M
        buffer_queue_limit 32
-       flush_interval 60s  # flushes events ever minute. Can be configured as needed.
+       flush_interval 10s  # flushes events ever minute. Can be configured as needed.
        max_retry_wait 30
        disable_retry_limit
-       num_threads 2
+       num_threads 8
     </match>
 ---
