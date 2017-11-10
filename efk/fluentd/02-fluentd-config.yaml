@@ -66,7 +66,7 @@ data:
        host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
        port #ELASTICSEARCH_PORT#
        logstash_format true
-       user fluent
+       user # Enter the username to connect to ES
        password # Enter the password for the user to connect to ES
        buffer_chunk_limit 2M
        buffer_queue_limit 32
@@ -84,7 +84,7 @@ data:
        host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
        port #ELASTICSEARCH_PORT#
        logstash_format true
-       user fluent
+       user # Enter the username to connect to ES
        password # Enter the password for the user to connect to ES
        buffer_chunk_limit 2M
        buffer_queue_limit 32
@@ -101,7 +101,7 @@ data:
        logstash_prefix #indexUUID#.pxLog ## Prefix for creating an Elastic search index.
        host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
        port #ELASTICSEARCH_PORT#
-       user fluent
+       user # Enter the username to connect to ES
        password # Enter the password for the user to connect to ES
        logstash_format true
        buffer_chunk_limit 2M
