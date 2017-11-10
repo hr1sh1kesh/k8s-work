@@ -20,10 +20,12 @@ spec:
       serviceAccountName: fluentd
       initContainers:
       - name: fluentd-init
-        image: hrishi/fluentd-initutils:v24
+        image: hrishi/fluentd-initutils:v1
+        imagePullPolicy: Always
         securityContext:
           privileged: true
         command: ['/bin/sh']
+        # Pass the Elasticsearch host and the IP as arguments 
         args: ['-c','/usr/bin/init-fluentd.sh portworx-service']
         volumeMounts:
         - name: config
