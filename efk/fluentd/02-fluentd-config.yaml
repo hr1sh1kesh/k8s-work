@@ -10,7 +10,7 @@ data:
      @type systemd
      path /var/log/journal
      filters [{ "_SYSTEMD_UNIT": "docker.service" }]
-     pos_file /tmp/dockerservice.pos
+     pos_file /tmp/docker-service.pos
      tag journal.dockerd
      read_from_head true
      strip_underscores true
@@ -59,52 +59,107 @@ data:
     </filter>
 
     <match journal.dockerd.**>
-       type elasticsearch_dynamic
-       log_level info
-       include_tag_key false
-       logstash_prefix #indexUUID#.journal.dockerd ## Prefix for creating an Elastic search index.
-       host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
-       port #ELASTICSEARCH_PORT#
-       logstash_format true
-       buffer_chunk_limit 2M
-       buffer_queue_limit 32
-       flush_interval 60s  # flushes events ever minute. Can be configured as needed.
-       max_retry_wait 30
-       disable_retry_limit
-       num_threads 2
+      @type copy
+      <store>
+          @type s3
+          aws_key_id #AWS_KEY_ID#
+          aws_sec_key #AWS_SECRET_KEY_ID#
+          s3_bucket #S3_BUCKET#
+          s3_region us-west-2
+          path logs/
+          buffer_path /var/log/journal-dockerd/s3
+          s3_object_key_format #indexUUID#_%{path}%{time_slice}_%{index}.%{file_extension}          
+          time_slice_format %Y%m%d%H
+          time_slice_wait 3m
+          utc
+          buffer_chunk_limit 256m
+      </store>
+      <store>
+          type elasticsearch_dynamic
+          log_level info
+          include_tag_key false
+          logstash_prefix #indexUUID#.journal.dockerd ## Prefix for creating an Elastic search index.
+          host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
+          port #ELASTICSEARCH_PORT#
+          user #FLUENT_USER#
+          password #FLUENT_PASSWORD# Enter the password for the user to connect to ES
+          logstash_format true
+          buffer_chunk_limit 2M
+          buffer_queue_limit 32
+          flush_interval 30s  # flushes events ever minute. Can be configured as needed.
+          max_retry_wait 30
+          disable_retry_limit
+          num_threads 2
+       </store>
     </match>
 
     <match journal.kubelet.**>
-       type elasticsearch_dynamic
-       log_level info
-       include_tag_key false
-       logstash_prefix #indexUUID#.journal.kubelet ## Prefix for creating an Elastic search index.
-       host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
-       port #ELASTICSEARCH_PORT#
-       logstash_format true
-       buffer_chunk_limit 2M
-       buffer_queue_limit 32
-       flush_interval 60s  # flushes events ever minute. Can be configured as needed.
-       max_retry_wait 30
-       disable_retry_limit
-       num_threads 2
+      @type copy
+      <store>
+          @type s3
+          aws_key_id #AWS_KEY_ID#
+          aws_sec_key #AWS_SECRET_KEY_ID#
+          s3_bucket #S3_BUCKET#
+          s3_region us-west-2
+          path logs/
+          buffer_path /var/log/journal-kubelet/s3
+          s3_object_key_format #indexUUID#_%{path}%{time_slice}_%{index}.%{file_extension}          
+          time_slice_format %Y%m%d%H
+          time_slice_wait 3m
+          utc
+          buffer_chunk_limit 256m
+      </store>
+      <store>
+          type elasticsearch_dynamic
+          log_level info
+          include_tag_key false
+          logstash_prefix #indexUUID#.journal.kubelet ## Prefix for creating an Elastic search index.
+          host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
+          port #ELASTICSEARCH_PORT#
+          user #FLUENT_USER#
+          password #FLUENT_PASSWORD# #Enter the password for the user to connect to ES
+          logstash_format true
+          buffer_chunk_limit 2M
+          buffer_queue_limit 32
+          flush_interval 30s  # flushes events ever minute. Can be configured as needed.
+          max_retry_wait 30
+          disable_retry_limit
+          num_threads 2
+       </store>
     </match>
 
     <match portworx.**>
-       type elasticsearch
-       log_level info
-       include_tag_key false
-       logstash_prefix #indexUUID#.pxLog ## Prefix for creating an Elastic search index.
-       host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
-       port #ELASTICSEARCH_PORT#
-       user fluent
-       password # Enter the password for the user to connect to ES
-       logstash_format true
-       buffer_chunk_limit 2M
-       buffer_queue_limit 32
-       flush_interval 60s  # flushes events ever minute. Can be configured as needed.
-       max_retry_wait 30
-       disable_retry_limit
-       num_threads 2
-    </match>
+      @type copy
+      <store>
+          @type s3
+          aws_key_id #AWS_KEY_ID#
+          aws_sec_key #AWS_SECRET_KEY_ID#
+          s3_bucket #S3_BUCKET#
+          s3_region us-west-2
+          path logs/
+          buffer_path /var/log/px-container/s3
+          s3_object_key_format #indexUUID#_%{path}%{time_slice}_%{index}.%{file_extension}          
+          time_slice_format %Y%m%d%H
+          time_slice_wait 1m
+          utc
+          buffer_chunk_limit 256m
+      </store>
+      <store>
+          type elasticsearch_dynamic
+          log_level info
+          include_tag_key false
+          logstash_prefix #indexUUID#.portworx-logs ## Prefix for creating an Elastic search index.
+          host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
+          port #ELASTICSEARCH_PORT#
+          user #FLUENT_USER#
+          password #FLUENT_PASSWORD# #Enter the password for the user to connect to ES
+          logstash_format true
+          buffer_chunk_limit 2M
+          buffer_queue_limit 32
+          flush_interval 30s  # flushes events ever minute. Can be configured as needed.
+          max_retry_wait 30
+          disable_retry_limit
+          num_threads 2
+      </store>
+    </match>    
 ---
