@@ -6,7 +6,7 @@ metadata:
     component: elasticsearch
     role: client
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -28,7 +28,7 @@ spec:
             add:
               - IPC_LOCK
               - SYS_RESOURCE
-        image: hrishi/docker-elasticsearch-k8s:v1 #quay.io/pires/docker-elasticsearch-kubernetes:5.5.0
+        image: hrishi/docker-elasticsearch-k8s:v3
         imagePullPolicy: Always
         env:
         - name: NAMESPACE
@@ -48,7 +48,7 @@ spec:
         - name: HTTP_ENABLE
           value: "true"
         - name: "ES_JAVA_OPTS"
-          value: "-Xms256m -Xmx256m"
+          value: "-Xms512m -Xmx512m"
         ports:
         - containerPort: 9200
           name: http
