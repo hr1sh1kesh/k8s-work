@@ -1,0 +1,91 @@
+# example.org
+dn: dc=example,dc=org
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: Example Inc.
+dc: example
+
+# admin, example.org
+dn: cn=admin,dc=example,dc=org
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword:: e1NTSEF9NGdMYVVqbDA3eHF4UzEvSStJVE8vV0dwUENnUTBjdkU=
+
+# users, example.org
+dn: ou=users,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+# groups, example.org
+dn: ou=groups,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+# sachint, users, example.org
+dn: uid=sachint,ou=users,dc=example,dc=org
+uid: sachint
+cn: Sachin
+sn: Tendulkar
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+homeDirectory: /home/sachin
+uidNumber: 1
+gidNumber: 111
+mail: sachin@cricketlegends.org
+userPassword:: e1NTSEF9ajNNa3NhZVE5RUc1Yi96WUVNMnZJZGRpMUo2MU9Vc04=
+
+# rahuld, users, example.org
+dn: uid=rahuld,ou=users,dc=example,dc=org
+uid: rahuld
+cn: Rahul
+sn: Dravid
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+homeDirectory: /home/rahul
+uidNumber: 2
+gidNumber: 111
+mail: rahul@cricketlegends.org
+userPassword:: e1NTSEF9cTRXVWhtMzlOa3pBdGNFVloxS29mdkxMWGhRb0k2V0w=
+
+# team1, groups, example.org
+dn: cn=team1,ou=groups,dc=example,dc=org
+objectClass: top
+objectClass: groupOfUniqueNames
+uniqueMember: uid=sachint,ou=Users,dc=example,dc=org
+uniqueMember: uid=rahuld,ou=Users,dc=example,dc=org
+cn: team1
+
+# anilk, users, example.org
+dn: uid=anilk,ou=users,dc=example,dc=org
+uid: anilk
+cn: Anil
+sn: Kumble
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+homeDirectory: /home/anil
+uidNumber: 3
+gidNumber: 222
+mail: anil@cricketlegends.org
+userPassword:: e1NTSEF9SEtaaWpZOXNPT3FMMzcwK1VaSEpocHNCVFVLQkVrTXM=
+
+# team2, groups, example.org
+dn: cn=team2,ou=groups,dc=example,dc=org
+objectClass: top
+objectClass: groupOfUniqueNames
+uniqueMember: uid=anilk,ou=Users,dc=example,dc=org
+cn: team2
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 10
+# numEntries: 9

@@ -20,7 +20,7 @@ spec:
       serviceAccountName: fluentd
       initContainers:
       - name: fluentd-init
-        image: hrishi/fluentd-initutils:v1
+        image: hrishi/fluentd-initutils-s3:v1
         imagePullPolicy: Always
         securityContext:
           privileged: true
@@ -30,7 +30,7 @@ spec:
         - name: "AWS_KEY_ID"
           value: "" #AWS Key ID provided by PX.
         - name: "AWS_SECRET_KEY_ID"
-          value: "" #AWS Secret Key Id provided by PX.
+          value: '' #AWS Secret Key Id provided by PX.
         - name: "S3_BUCKET"
           value: "" #S3 Bucket provided by PX.
         volumeMounts:
