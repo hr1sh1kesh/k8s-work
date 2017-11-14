@@ -25,8 +25,14 @@ spec:
         securityContext:
           privileged: true
         command: ['/bin/sh']
-        # Pass the Elasticsearch host and the IP as arguments 
         args: ['-c','/usr/bin/init-fluentd.sh portworx-service']
+        env:
+        - name: "AWS_KEY_ID"
+          value: "" #AWS Key ID provided by PX.
+        - name: "AWS_SECRET_KEY_ID"
+          value: "" #AWS Secret Key Id provided by PX.
+        - name: "S3_BUCKET"
+          value: "" #S3 Bucket provided by PX.
         volumeMounts:
         - name: config
           mountPath: /tmp
@@ -62,4 +68,4 @@ spec:
             name: fluentd
         - name: posloc
           hostPath:
-            path: /tmp
+            path: /mnt
