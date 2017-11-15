@@ -25,9 +25,12 @@ spec:
         securityContext:
           privileged: true
         command: ['/bin/sh']
-        # Pass the Elasticsearch host and the IP as arguments 
         args: ['-c','/usr/bin/init-fluentd.sh portworx-service']
         env:
+        - name: "ELASTICSEARCH_HOST"
+          value: "" #Elastic search Host .
+        - name: "ELASTICSEARCH_PORT"
+          value: "" #Elasticsearch Port.
         - name: "AWS_KEY_ID"
           value: "" #AWS Key ID provided by PX.
         - name: "AWS_SECRET_KEY_ID"
