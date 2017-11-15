@@ -20,7 +20,7 @@ spec:
       serviceAccountName: fluentd
       initContainers:
       - name: fluentd-init
-        image: hrishi/fluentd-initutils:v1
+        image: hrishi/fluentd-initutils-s3-and-es:v1
         imagePullPolicy: Always
         securityContext:
           privileged: true
@@ -76,4 +76,4 @@ spec:
             name: fluentd
         - name: posloc
           hostPath:
-            path: /tmp
+            path: /mnt
