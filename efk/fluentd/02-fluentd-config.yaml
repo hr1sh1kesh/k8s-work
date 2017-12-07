@@ -65,7 +65,7 @@ data:
           aws_key_id #AWS_KEY_ID#
           aws_sec_key #AWS_SECRET_KEY_ID#
           s3_bucket #S3_BUCKET#
-          s3_region us-west-2
+          s3_region #S3_REGION#
           path logs/
           buffer_path /var/log/journal-dockerd/s3
           s3_object_key_format #indexUUID#_%{path}%{time_slice}_%{index}.%{file_extension}          
@@ -100,7 +100,7 @@ data:
           aws_key_id #AWS_KEY_ID#
           aws_sec_key #AWS_SECRET_KEY_ID#
           s3_bucket #S3_BUCKET#
-          s3_region us-west-2
+          s3_region #S3_REGION#
           path logs/
           buffer_path /var/log/journal-kubelet/s3
           s3_object_key_format #indexUUID#_%{path}%{time_slice}_%{index}.%{file_extension}          
@@ -135,7 +135,7 @@ data:
           aws_key_id #AWS_KEY_ID#
           aws_sec_key #AWS_SECRET_KEY_ID#
           s3_bucket #S3_BUCKET#
-          s3_region us-west-2
+          s3_region #S3_REGION#
           path logs/
           buffer_path /var/log/px-container/s3
           s3_object_key_format #indexUUID#_%{path}%{time_slice}_%{index}.%{file_extension}          

@@ -31,6 +31,7 @@ sed -i "s/#ELASTICSEARCH_HOST#/$ELASTICSEARCH_HOST/g" /tmp/fluent.conf
 sed -i "s/#AWS_KEY_ID#/$AWS_KEY_ID/g" /tmp/fluent.conf
 sed -i "s/#AWS_SECRET_KEY_ID#/$AWS_SECRET_KEY_ID/g" /tmp/fluent.conf
 sed -i "s/#S3_BUCKET#/$S3_BUCKET/g" /tmp/fluent.conf
+sed -i "s/#S3_REGION#/$S3_REGION/g" /tmp/fluent.conf
 sed -i "s/#FLUENT_USER#/$FLUENT_USER/g" /tmp/fluent.conf
 sed -i "s/#FLUENT_PASSWORD#/$FLUENT_PASSWORD/g" /tmp/fluent.conf
 
