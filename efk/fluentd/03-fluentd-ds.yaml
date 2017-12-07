@@ -33,6 +33,8 @@ spec:
           value: '' #AWS Secret Key Id provided by PX.
         - name: "S3_BUCKET"
           value: "" #S3 Bucket provided by PX.
+        - name: "S3_REGION"
+          value: "" #S3 Region provided by PX.
         volumeMounts:
         - name: config
           mountPath: /tmp
