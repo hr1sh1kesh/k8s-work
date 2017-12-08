@@ -1,0 +1,105 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: kube-system
+  labels:
+    k8s-app: fluentd-logging
+    version: v1
+    kubernetes.io/cluster-service: "true"
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-logging
+        version: v1
+        kubernetes.io/cluster-service: "true"
+    spec:
+      serviceAccount: fluentd
+      serviceAccountName: fluentd
+      initContainers:
+      - name: fluentd-init
+        image: hrishi/fluentd-initutils-s3-and-es:v1
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true
+        command: ['/bin/sh']
+        args: ['-c','/usr/bin/init-fluentd.sh portworx-service']
+        env:
+        - name: "ELASTICSEARCH_HOST"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: ELASTICSEARCH_HOST
+        - name: "ELASTICSEARCH_PORT"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: ELASTICSEARCH_PORT
+        - name: "AWS_KEY_ID"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: AWS_KEY_ID
+        - name: "AWS_SECRET_KEY_ID"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: AWS_SECRET_KEY_ID
+        - name: "S3_BUCKET"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: S3_BUCKET
+        - name: "S3_REGION"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: S3_REGION
+        - name: "FLUENT_USER"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: FLUENT_USER
+        - name: "FLUENT_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: FLUENT_PASSWORD
+        volumeMounts:
+        - name: config
+          mountPath: /tmp
+      containers:
+        - name: fluentd
+          image: hrishi/fluentd:v1
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+            - name: runlog
+              mountPath: /run/log
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+            - name: posloc
+              mountPath: /tmp
+            - name: config
+              mountPath: /fluentd/etc/fluent.conf
+              subPath: fluent.conf
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: runlog
+          hostPath:
+            path: /run/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: config
+          configMap:
+            name: fluentd
+        - name: posloc
+          hostPath:
+            path: /mnt

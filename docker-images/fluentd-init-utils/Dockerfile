@@ -8,4 +8,3 @@ RUN apk update \
  && rm -rf /var/cache/apk/*
 
 COPY init-fluentd.sh /usr/bin
-
