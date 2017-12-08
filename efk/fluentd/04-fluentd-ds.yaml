@@ -28,13 +28,25 @@ spec:
         args: ['-c','/usr/bin/init-fluentd.sh portworx-service']
         env:
         - name: "AWS_KEY_ID"
-          value: "" #AWS Key ID provided by PX.
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: AWS_KEY_ID
         - name: "AWS_SECRET_KEY_ID"
-          value: '' #AWS Secret Key Id provided by PX.
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: AWS_SECRET_KEY_ID
         - name: "S3_BUCKET"
-          value: "" #S3 Bucket provided by PX.
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: S3_BUCKET
         - name: "S3_REGION"
-          value: "" #S3 Region provided by PX.
+          valueFrom:
+            secretKeyRef:
+              name: fluentd-px-secrets
+              key: S3_REGION
         volumeMounts:
         - name: config
           mountPath: /tmp
