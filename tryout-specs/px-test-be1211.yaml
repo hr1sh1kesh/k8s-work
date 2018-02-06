@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: randomizer
+  labels:
+    component: randomizer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: randomizer
+    spec:
+      containers:
+      - name: randomizer
+        securityContext:
+          privileged: false
+        image: hrishi/randomizer:v8
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: data
+          mountPath: /var
+      volumes:
+      - name: data
+        portworxVolume:
+          volumeID: data

@@ -1,0 +1,32 @@
+apiVersion: "apps/v1beta1"
+kind: StatefulSet
+metadata:
+  name: randomizer
+  labels:
+    component: randomizer
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        component: randomizer
+    spec:
+      containers:
+      - name: randomizer
+        securityContext:
+          privileged: false
+        image: hrishi/randomizer:v8
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: data
+          mountPath: /mnt
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      annotations:
+        volume.beta.kubernetes.io/storage-class: portworx-sc # Should match the .metadata.name in the Storageclass spec
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
