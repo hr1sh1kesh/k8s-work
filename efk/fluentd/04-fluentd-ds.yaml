@@ -20,7 +20,7 @@ spec:
       serviceAccountName: fluentd
       initContainers:
       - name: fluentd-init
-        image: hrishi/fluentd-initutils-s3-and-es:v1
+        image: hrishi/fluentd-initutils-es:v1
         imagePullPolicy: Always
         securityContext:
           privileged: true
@@ -28,51 +28,15 @@ spec:
         args: ['-c','/usr/bin/init-fluentd.sh portworx-service']
         env:
         - name: "ELASTICSEARCH_HOST"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: ELASTICSEARCH_HOST
+          value: ""
         - name: "ELASTICSEARCH_PORT"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: ELASTICSEARCH_PORT
-        - name: "AWS_KEY_ID"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: AWS_KEY_ID
-        - name: "AWS_SECRET_KEY_ID"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: AWS_SECRET_KEY_ID
-        - name: "S3_BUCKET"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: S3_BUCKET
-        - name: "S3_REGION"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: S3_REGION
-        - name: "FLUENT_USER"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: FLUENT_USER
-        - name: "FLUENT_PASSWORD"
-          valueFrom:
-            secretKeyRef:
-              name: fluentd-px-secrets
-              key: FLUENT_PASSWORD
+          value: ""
         volumeMounts:
         - name: config
           mountPath: /tmp
       containers:
         - name: fluentd
-          image: hrishi/fluentd:v1
+          image: hrishi/fluentd:v1 # Custom Image since it has a few added plugins (S3 and Rename key plugins )
           securityContext:
             privileged: true
           volumeMounts:
