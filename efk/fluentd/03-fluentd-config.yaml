@@ -99,7 +99,7 @@ data:
       port #ELASTICSEARCH_PORT#
       logstash_format true
       buffer_chunk_limit 512k
-      buffer_queue_limit 32
+      buffer_queue_limit 256
       flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
       max_retry_wait 30
       disable_retry_limit
@@ -115,7 +115,7 @@ data:
       port #ELASTICSEARCH_PORT#
       logstash_format true
       buffer_chunk_limit 512k
-      buffer_queue_limit 32
+      buffer_queue_limit 256
       flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
       max_retry_wait 30
       disable_retry_limit
@@ -131,7 +131,7 @@ data:
       port #ELASTICSEARCH_PORT#
       logstash_format true
       buffer_chunk_limit 512k
-      buffer_queue_limit 32
+      buffer_queue_limit 256
       flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
       max_retry_wait 30
       disable_retry_limit
