@@ -8,9 +8,9 @@ data:
   fluent.conf: |
    <source>
      @type systemd
-     path /var/log/journal
+     path /run/log/journal
      filters [{ "_SYSTEMD_UNIT": "docker.service" }]
-     pos_file /tmp/docker-service.pos
+     pos_file /mnt/docker-service.pos
      tag journal.dockerd
      read_from_head true
      strip_underscores true
@@ -18,9 +18,9 @@ data:
 
     <source>
       @type systemd
-      path /var/log/journal
+      path /run/log/journal
       filters [{ "_SYSTEMD_UNIT": "kubelet.service" }]
-      pos_file /tmp/k8s-kubelet.pos
+      pos_file /mnt/k8s-kubelet.pos
       tag journal.kubelet
       read_from_head true
       strip_underscores true
@@ -28,18 +28,18 @@ data:
 
     <source>
       @type systemd
-      path /var/log/journal
+      path /run/log/journal
       filters [{ "_SYSTEMD_UNIT": "portworx.service" }]
-      pos_file /tmp/k8s-kubelet.pos
+      pos_file /mnt/k8s-kubelet.pos
       tag journal.portworx
       read_from_head true
       strip_underscores true
     </source>
 
     <source>
-      type tail
+      @type tail
       path /var/log/containers/portworx*.log
-      pos_file /tmp/px-container.log.pos
+      pos_file /mnt/px-container.log.pos
       time_format %Y-%m-%dT%H:%M:%S.%N
       tag portworx.*
       format json
@@ -71,70 +71,70 @@ data:
     </filter>
 
     <filter **>
-      type kubernetes_metadata
+      @type kubernetes_metadata
     </filter>
 
     <match journal.dockerd.**>
-          @type elasticsearch_dynamic
-          log_level info
-          include_tag_key false
-          logstash_prefix #indexUUID#.journal.dockerd ## Prefix for creating an Elastic search index.
-          host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
-          port #ELASTICSEARCH_PORT#
-          logstash_format true
-          buffer_chunk_limit 512k
-          buffer_queue_limit 32
-          flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
-          max_retry_wait 30
-          disable_retry_limit
-          num_threads 2
+      @type elasticsearch_dynamic
+      log_level info
+      include_tag_key false
+      logstash_prefix #indexUUID#.journal.dockerd ## Prefix for creating an Elastic search index.
+      host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
+      port #ELASTICSEARCH_PORT#
+      logstash_format true
+      buffer_chunk_limit 512k
+      buffer_queue_limit 300
+      flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
+      max_retry_wait 30
+      disable_retry_limit
+      num_threads 4
     </match>
 
     <match journal.portworx.**>
-          @type elasticsearch_dynamic
-          log_level info
-          include_tag_key false
-          logstash_prefix #indexUUID#.journal.portworx ## Prefix for creating an Elastic search index.
-          host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
-          port #ELASTICSEARCH_PORT#
-          logstash_format true
-          buffer_chunk_limit 512k
-          buffer_queue_limit 32
-          flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
-          max_retry_wait 30
-          disable_retry_limit
-          num_threads 2
+      @type elasticsearch_dynamic
+      log_level info
+      include_tag_key false
+      logstash_prefix #indexUUID#.journal.portworx ## Prefix for creating an Elastic search index.
+      host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
+      port #ELASTICSEARCH_PORT#
+      logstash_format true
+      buffer_chunk_limit 512k
+      buffer_queue_limit 32
+      flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
+      max_retry_wait 30
+      disable_retry_limit
+      num_threads 4
     </match>
 
     <match journal.kubelet.**>
-          @type elasticsearch_dynamic
-          log_level info
-          include_tag_key false
-          logstash_prefix #indexUUID#.journal.kubelet ## Prefix for creating an Elastic search index.
-          host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
-          port #ELASTICSEARCH_PORT#
-          logstash_format true
-          buffer_chunk_limit 512k
-          buffer_queue_limit 32
-          flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
-          max_retry_wait 30
-          disable_retry_limit
-          num_threads 2
+      @type elasticsearch_dynamic
+      log_level info
+      include_tag_key false
+      logstash_prefix #indexUUID#.journal.kubelet ## Prefix for creating an Elastic search index.
+      host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
+      port #ELASTICSEARCH_PORT#
+      logstash_format true
+      buffer_chunk_limit 512k
+      buffer_queue_limit 32
+      flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
+      max_retry_wait 30
+      disable_retry_limit
+      num_threads 4
     </match>
 
     <match portworx.**>
-          @type elasticsearch_dynamic
-          log_level info
-          include_tag_key false
-          logstash_prefix #indexUUID#.portworx-logs ## Prefix for creating an Elastic search index.
-          host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
-          port #ELASTICSEARCH_PORT#
-          logstash_format true
-          buffer_chunk_limit 512k
-          buffer_queue_limit 32
-          flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
-          max_retry_wait 30
-          disable_retry_limit
-          num_threads 2
+      @type elasticsearch_dynamic
+      log_level info
+      include_tag_key false
+      logstash_prefix #indexUUID#.portworx-logs ## Prefix for creating an Elastic search index.
+      host #ELASTICSEARCH_HOST# ## Hostname of the ES cluster.
+      port #ELASTICSEARCH_PORT#
+      logstash_format true
+      buffer_chunk_limit 512k
+      buffer_queue_limit 32
+      flush_interval 30s  # flushes events 30 seconds. Can be configured as needed.
+      max_retry_wait 30
+      disable_retry_limit
+      num_threads 4
     </match>    
 ---
