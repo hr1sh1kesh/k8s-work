@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  namespace: kube-system
+  name: portworx-prometheus-sm
+  labels:
+    name: portworx-prometheus-sm
+    component: monitoring
+spec:
+  selector:
+    matchLabels:
+      name: portworx-service
+  endpoints:
+  - port: px-api
