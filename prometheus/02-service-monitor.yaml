@@ -5,10 +5,12 @@ metadata:
   name: portworx-prometheus-sm
   labels:
     name: portworx-prometheus-sm
-    component: monitoring
 spec:
   selector:
     matchLabels:
-      name: portworx-service
+      name: portworx
+  namespaceSelector: 
+    any: true
   endpoints:
   - port: px-api
+    targetPort: 9001
