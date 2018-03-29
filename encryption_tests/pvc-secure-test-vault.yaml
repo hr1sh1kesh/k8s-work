@@ -1,0 +1,105 @@
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: portworx-sc-repl3-secure
+provisioner: kubernetes.io/portworx-volume
+parameters:
+  repl: "3"
+  priority_io: "high"
+  secure: "true"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc001-secure-sc-clusterencrypt
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure
+    #cluster key encryption since Storage class is secure. 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc001-secure-sc-clusterencrypt
+  labels:
+    app: pvc001-secure-sc-clusterencrypt
+spec:
+  containers:
+  - image: nginx
+    name: pvc001-secure-sc-clusterencrypt
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc001-secure-sc-clusterencrypt
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc002-secure-sc-specificsecretkey
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure
+    px/secret-name: pvc-secret-01 #Specific user defined key
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc002-secure-sc-specificsecretkey
+  labels:
+    app: pvc002-secure-sc-specificsecretkey
+spec:
+  containers:
+  - image: nginx
+    name: pvc002-secure-sc-specificsecretkey
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc002-secure-sc-specificsecretkey
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc002-secure-sc-incorrectspecificsecretkey
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure
+    px/secret-name: pvc-incorrect-secret #Key which is not present
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc002-secure-sc-incorrectspecificsecretkey
+  labels:
+    app: pvc002-secure-sc-incorrectspecificsecretkey
+spec:
+  containers:
+  - image: nginx
+    name: pvc002-secure-sc-incorrectspecificsecretkey
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc002-secure-sc-incorrectspecificsecretkey

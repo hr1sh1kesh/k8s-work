@@ -1,0 +1,77 @@
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: portworx-sc-repl3-secure-withSecretKey
+provisioner: kubernetes.io/portworx-volume
+parameters:
+  repl: "3"
+  priority_io: "high"
+  secure: "true"
+  secret_key: "pvc-secret-02"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc001-secure-sc-specifickeyinsc
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure-withSecretKey
+    #Encrypt using key on the SC not the Cluster key. 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc001-secure-sc-specifickeyinsc
+  labels:
+    app: pvc001-secure-sc-specifickeyinsc
+spec:
+  containers:
+  - image: nginx
+    name: pvc001-secure-sc-specifickeyinsc
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc001-secure-sc-specifickeyinsc
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc002-secure-sc-overrideSCKeyInPVC
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure-withSecretKey
+    px/secret-name: pvc-secret-01 #Specific user defined key
+    #Encrypt using key on the pvc not using the one on SC. 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc001-secure-sc-overrideSCKeyInPVC
+  labels:
+    app: pvc001-secure-sc-overrideSCKeyInPVC
+spec:
+  containers:
+  - image: nginx
+    name: pvc001-secure-sc-overrideSCKeyInPVC
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc002-secure-sc-overrideSCKeyInPVC

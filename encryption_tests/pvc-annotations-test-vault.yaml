@@ -1,0 +1,107 @@
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: portworx-sc-repl3-insecure
+provisioner: kubernetes.io/portworx-volume
+parameters:
+  repl: "3"
+  priority_io: "high"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc001-insecure-sc-clustersecret
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-insecure
+    px/secret-name: pve-cluster-key # Cluster-key
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc001-insecure-sc-clustersecret
+  labels:
+    app: pvc001-insecure-sc-clustersecret
+spec:
+  containers:
+  - image: nginx
+    name: pvc001-insecure-sc-clustersecret
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc001-insecure-sc-clustersecret
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc002-insecure-sc-specifickey
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-insecure
+    px/secret-name: pvc-secret-01 #Specific user defined key
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc002-insecure-sc-specifickey
+  labels:
+    app: pvc002-insecure-sc-specifickey
+spec:
+  containers:
+  - image: nginx
+    name: pvc002-insecure-sc-specifickey
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc002-insecure-sc-specifickey
+---
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ns.default-name.pvc003-insecure-sc-noencryption
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-insecure 
+    #No encryption since the SC is insecure and the PVC doesnt have the secret-name on it. 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc003-insecure-sc-noencryption
+  labels:
+    app: pvc003-insecure-sc-noencryption
+spec:
+  containers:
+  - image: nginx
+    name: pvc003-insecure-sc-noencryption
+    volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ns.default-name.pvc003-insecure-sc-noencryption

@@ -1,0 +1,226 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portworx
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: px-vol-encryption
+type: Opaque
+data:
+  px-k8s-cluster-key: Y2x1c3Rlci1rZXkK
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vol-enc-01
+type: Opaque
+data:
+  key01: a2V5MDEK
+  key02: a2V5MDIK
+  key03: a2V5MDMK
+---
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: portworx-sc-repl3-secure-k8s
+provisioner: kubernetes.io/portworx-volume
+parameters:
+  repl: "3"
+  priority_io: "high"
+  secure: "true"
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ns.default-name.pvc001-k8s-secure-sc-specifiedKey
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure-k8s
+    px/secret-name: vol-enc-01
+    px/secret-namespace: default
+    px/secret-key: key01
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: ns.default-name.pvc001-k8s-secure-sc-specifiedKey
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ns.default-name.pvc001-k8s-secure-sc-nonamespace
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure-k8s
+    px/secret-name: vol-enc-01
+# No namespace so should look for the secret in the same namespace as the PVC. 
+    px/secret-key: key01 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: ns.default-name.pvc001-k8s-secure-sc-nonamespace
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ns.default-name.pvc001-k8s-secure-sc-sameKeyasPVC
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure-k8s
+    px/secret-name: vol-enc-01
+# No namespace so should look for the secret in the same namespace as the PVC. 
+    px/secret-key: pvc001-k8s-secure-sc-sameKeyasPVC 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: ns.default-name.pvc001-k8s-secure-sc-pvc001-k8s-secure-sc-sameKeyasPVC
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ns.default-name.pvc001-k8s-secure-sc-noKeyProvided
+  annotations:
+    volume.beta.kubernetes.io/storage-class: portworx-sc-repl3-secure-k8s
+    px/secret-name: vol-enc-01
+# No namespace so should look for the secret in the same namespace as the PVC. 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: ns.default-name.pvc001-k8s-secure-sc-noKeyProvided
+---
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: portworx-sc-repl3-secure-k8s-with-secret
+provisioner: kubernetes.io/portworx-volume
+parameters:
+  repl: "3"
+  priority_io: "high"
+  secure: "true"
+  secret_key: key02
+  secret_namespace: default
+  secret_name: vol-enc-01
