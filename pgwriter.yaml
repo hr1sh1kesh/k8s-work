@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pgwriter
+  namespace: pgw
+  labels:
+    app: pgwriter
+spec:
+  containers:
+  - name: pgwriter
+    image: hrishi/pgwriter:v1
+    env:
+    - name: POSTGRES_USER
+      value: mypostgresuser
+    - name: POSTGRES_PASSWORD
+      value: mypassword
+    - name: POSTGRES_DB
+      value: writerdata
+    - name: POSTGRES_TABLE
+      value: testdata
+    - name: POSTGRES_HOST
+      value: postgres
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pgclient
+  namespace: pgw
+  labels:
+    app: pgclient
+spec:
+  containers:
+  - name: pgclient
+    image: postgres:10.4
+---
+psql postgresql://mypostgresuser:mypassword@$postgres/writerdata -c "create user abc;"
+psql postgresql://postgres:password@$postgres -c "select * from pg_user;"
